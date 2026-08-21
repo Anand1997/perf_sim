@@ -2,7 +2,8 @@
 SICP Digital Circuit Simulator package.
 
 Faithful Python implementation of the event-driven digital circuit simulator
-from Structure and Interpretation of Computer Programs (SICP), Section 3.3.4.
+from Structure and Interpretation of Computer Programs (SICP), Section 3.3.4,
+with optional SimPy Discrete-Event Simulation engine extensions.
 """
 
 from circuit_sim.agenda import (
@@ -69,6 +70,22 @@ from circuit_sim.queue import (
     insert_queue,
     make_queue,
 )
+from circuit_sim.sequential import (
+    binary_counter,
+    d_flip_flop,
+    d_latch,
+    sr_latch,
+    t_flip_flop,
+)
+from circuit_sim.simpy_agenda import (
+    SIMPY_AVAILABLE,
+    SimPyAgenda,
+    clock_generator,
+    make_realtime_agenda,
+    make_simpy_agenda,
+    pulse_generator,
+    signal_schedule,
+)
 from circuit_sim.wire import (
     Wire,
     add_action,
@@ -120,6 +137,14 @@ __all__ = [
     "get_default_agenda",
     "set_default_agenda",
     "reset_default_agenda",
+    # SimPy Integration
+    "SIMPY_AVAILABLE",
+    "SimPyAgenda",
+    "make_simpy_agenda",
+    "make_realtime_agenda",
+    "clock_generator",
+    "pulse_generator",
+    "signal_schedule",
     # Delays
     "Delays",
     "DEFAULT_DELAYS",
@@ -144,12 +169,18 @@ __all__ = [
     "NandGate",
     "NorGate",
     "XorGate",
-    # Circuits
+    # Combinational Circuits
     "half_adder",
     "full_adder",
     "ripple_carry_adder",
     "multiplexer",
     "demultiplexer",
+    # Sequential Circuits
+    "sr_latch",
+    "d_latch",
+    "d_flip_flop",
+    "t_flip_flop",
+    "binary_counter",
     # Probe
     "probe",
     "ProbeEvent",
