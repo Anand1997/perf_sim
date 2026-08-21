@@ -307,9 +307,21 @@ python examples/ripple_carry_adder_demo.py
 # Run SimPy Clocked Sequential Circuit Demo
 python examples/simpy_clocked_counter_demo.py
 
-# Run Engine Performance Benchmark
-python examples/simpy_benchmark_demo.py
-```
+### Running in Visual Studio Code
+This project includes pre-configured [`.vscode/settings.json`](.vscode/settings.json) and [`.vscode/launch.json`](.vscode/launch.json) files:
+
+1. **Test Explorer (Testing Panel 🧪)**:
+   - Open the **Testing** icon on the Activity Bar (`Ctrl+Shift+P` -> `Testing: Focus on Test Explorer View`).
+   - Click **Run All Tests** or click the ▶ / 🐞 (Debug) icon next to any test function or test file in the editor gutter.
+2. **Interactive Debugger (`F5` / Run and Debug Panel)**:
+   - Select one of the pre-configured debug profiles from the Run & Debug dropdown (`Ctrl+Shift+D`):
+     - `Python: Debug All Tests (pytest)`
+     - `Python: Debug Current Test File`
+     - `Demo: Half-Adder Walkthrough`
+     - `Demo: SimPy Clocked Circuit`
+     - `Demo: 8-Bit Ripple-Carry Adder`
+     - `Python: Debug Current File`
+   - Set breakpoints in your source files or tests and hit **F5** to start debugging.
 
 ---
 
