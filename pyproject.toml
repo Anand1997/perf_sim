@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "circuit-sim"
+version = "0.1.0"
+description = "SICP discrete-event digital circuit simulator"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+simpy = ["simpy>=4.0"]
+dev = ["pytest>=7.0", "simpy>=4.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["circuit_sim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
