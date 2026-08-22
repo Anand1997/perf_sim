@@ -1,0 +1,5 @@
+{
+  "name": "SICP Digital Circuit Simulator",
+  "user": "ubuntu",
+  "install": "./.cursor/scripts/cloud-agent-install.sh"
+}
