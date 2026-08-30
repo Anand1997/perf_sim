@@ -6,8 +6,7 @@
 (require "../utils/probe.rkt")
 
 (define (test-half-adder)
-  ;; Reset global agenda
-  (set! the-agenda (make-agenda))
+  (reset-agenda!)
 
   (define input-1 (make-wire))
   (define input-2 (make-wire))

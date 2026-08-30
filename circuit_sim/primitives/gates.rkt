@@ -5,7 +5,6 @@
          or-gate)
 
 (require "../core/wire.rkt")
-(require "../core/agenda.rkt")
 (require "delays.rkt")
 
 ;; -------------------------------------------------------------------

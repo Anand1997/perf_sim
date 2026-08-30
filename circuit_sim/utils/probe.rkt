@@ -3,7 +3,6 @@
 (provide probe)
 
 (require "../core/wire.rkt")
-(require "../core/agenda.rkt")
 (require "../primitives/delays.rkt")
 
 (define (probe name wire)
@@ -12,6 +11,6 @@
                  (newline)
                  (display name)
                  (display " ")
-                 (display (current-time the-agenda))
+                 (display (current-time))
                  (display "  New-value = ")
                  (display (get-signal wire)))))
