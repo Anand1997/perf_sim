@@ -47,6 +47,7 @@ The simulator models digital hardware where signals travel through interconnecte
 | **`PrimitiveFunctionBox`** | [`circuit_sim.gates`](circuit_sim/gates.py) | Base abstraction for primitive gates introducing propagation delays. |
 | **Gates** | [`circuit_sim.gates`](circuit_sim/gates.py) | `inverter`, `and_gate`, `or_gate`, `nand_gate`, `nor_gate`, `xor_gate`, `compound_or_gate`. |
 | **Combinational Circuits** | [`circuit_sim.circuits`](circuit_sim/circuits.py) | `half_adder`, `full_adder`, `ripple_carry_adder`, `multiplexer`, `demultiplexer`. |
+| **N-bit Datapath** | [`circuit_sim.nbit`](circuit_sim/nbit.py) | Bus-wide `n_bit_not`/`and`/`or`/`xor`/`mux`, `n_bit_register`, Nand2Tetris-style `alu`. |
 | **Sequential Circuits** | [`circuit_sim.sequential`](circuit_sim/sequential.py) | `sr_latch`, `d_latch`, `d_flip_flop`, `t_flip_flop`, `binary_counter`. |
 | **Generators & Clocks** | [`circuit_sim.simpy_agenda`](circuit_sim/simpy_agenda.py) | `clock_generator`, `pulse_generator`, `signal_schedule`. |
 | **`probe`** | [`circuit_sim.probe`](circuit_sim/probe.py) | Attaches a monitor to a wire that logs signal changes with exact simulation timestamps. |
@@ -210,7 +211,34 @@ print(f"Result: {sum_val} (Carry-out: {get_signal(c_out)})")
 
 ---
 
-### 4. SimPy Clock Generator & Sequential D Flip-Flop
+### 4. N-bit ALU and Register
+
+An n-bit ALU implements the Nand2Tetris control bits (`zx`, `nx`, `zy`, `ny`, `f`, `no`) plus `zr`/`ng` flags. An n-bit register is a bank of positive-edge D flip-flops with an optional load enable:
+
+```python
+from circuit_sim import (
+    make_agenda, make_bus, make_wire, alu, n_bit_register,
+    set_bus_values, set_signal, propagate, bus_to_int, get_signal,
+)
+
+agenda = make_agenda()
+x = make_bus(8, "X")
+y = make_bus(8, "Y")
+out = make_bus(8, "OUT")
+zx, nx, zy, ny, f, no = [make_wire(n) for n in ("zx", "nx", "zy", "ny", "f", "no")]
+zr, ng = make_wire("zr"), make_wire("ng")
+alu(x, y, out, zx, nx, zy, ny, f, no, zr, ng, agenda=agenda)
+
+set_bus_values(x, 15)
+set_bus_values(y, 51)
+set_signal(f, 1)  # add
+propagate(agenda)
+print(bus_to_int(out), get_signal(zr), get_signal(ng))  # 66 0 0
+```
+
+---
+
+### 5. SimPy Clock Generator & Sequential D Flip-Flop
 
 Using SimPy's process engine to drive an edge-triggered D Flip-Flop with periodic clock pulses:
 
@@ -257,6 +285,7 @@ perf_sim/core/
 │   ├── simpy_agenda.py       # SimPy-backed Agenda, clocks & stimulus generators
 │   ├── gates.py              # Logic gates & PrimitiveFunctionBox
 │   ├── circuits.py           # Combinational circuits (adders, mux/demux)
+│   ├── nbit.py               # N-bit datapath (bitwise ops, mux, register, ALU)
 │   ├── sequential.py         # Sequential circuits (latches, flip-flops, counter)
 │   └── probe.py              # Wire monitoring probe & test recorder
 │
@@ -265,7 +294,8 @@ perf_sim/core/
 │   ├── full_adder_demo.py    # Full-adder truth table verification
 │   ├── ripple_carry_adder_demo.py  # 8-bit ripple-carry adder simulation
 │   ├── simpy_clocked_counter_demo.py # SimPy clock & D flip-flop demo
-│   └── simpy_benchmark_demo.py # Benchmark comparing SICP vs SimPy agenda
+│   ├── simpy_benchmark_demo.py # Benchmark comparing SICP vs SimPy agenda
+│   └── nbit_alu_demo.py      # 8-bit ALU and register walkthrough
 │
 ├── tests/                    # Comprehensive unit & integration tests
 │   ├── test_queue.py         # Queue tests
@@ -274,6 +304,7 @@ perf_sim/core/
 │   ├── test_simpy_agenda.py  # SimPy agenda & sequential circuits tests
 │   ├── test_gates.py         # Logic gates & delays tests
 │   ├── test_circuits.py      # Combinational circuit tests
+│   ├── test_nbit.py          # N-bit datapath, register, and ALU tests
 │   └── test_probe.py         # Probe & recorder tests
 │
 ├── doc/                      # Architecture diagrams
@@ -288,7 +319,7 @@ perf_sim/core/
 ## Running Demos and Tests
 
 ### Running the Tests
-Run the full test suite (43 tests) using `pytest`:
+Run the full test suite using `pytest`:
 ```bash
 python -m pytest -v
 ```
@@ -306,6 +337,9 @@ python examples/ripple_carry_adder_demo.py
 
 # Run SimPy Clocked Sequential Circuit Demo
 python examples/simpy_clocked_counter_demo.py
+
+# Run 8-bit ALU and register demo
+python examples/nbit_alu_demo.py
 
 ### Running in Visual Studio Code
 This project includes pre-configured [`.vscode/settings.json`](.vscode/settings.json) and [`.vscode/launch.json`](.vscode/launch.json) files:

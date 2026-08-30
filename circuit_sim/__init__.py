@@ -33,6 +33,18 @@ from circuit_sim.circuits import (
     multiplexer,
     ripple_carry_adder,
 )
+from circuit_sim.nbit import (
+    alu,
+    bus_to_int,
+    n_bit_and,
+    n_bit_and_bit,
+    n_bit_mux,
+    n_bit_not,
+    n_bit_or,
+    n_bit_register,
+    n_bit_xor,
+    or_reduce,
+)
 from circuit_sim.delays import DEFAULT_DELAYS, Delays
 from circuit_sim.gates import (
     AndGate,
@@ -175,6 +187,17 @@ __all__ = [
     "ripple_carry_adder",
     "multiplexer",
     "demultiplexer",
+    # N-bit datapath
+    "n_bit_not",
+    "n_bit_and",
+    "n_bit_or",
+    "n_bit_xor",
+    "n_bit_and_bit",
+    "n_bit_mux",
+    "or_reduce",
+    "n_bit_register",
+    "alu",
+    "bus_to_int",
     # Sequential Circuits
     "sr_latch",
     "d_latch",

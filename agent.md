@@ -26,6 +26,7 @@ perf_sim/core/
 │   ├── simpy_agenda.py       # SimPy-backed Agenda & process generators
 │   ├── gates.py              # Pure boolean logic & primitive logic gates
 │   ├── circuits.py           # Combinational circuits (adders, mux/demux)
+│   ├── nbit.py               # N-bit datapath (bitwise ops, mux, register, ALU)
 │   ├── sequential.py         # Sequential circuits (latches, flip-flops, counter)
 │   └── probe.py              # Monitoring probes & test recording utilities
 ├── examples/                 # Executable walkthroughs and benchmarks
@@ -33,10 +34,12 @@ perf_sim/core/
 │   ├── full_adder_demo.py
 │   ├── ripple_carry_adder_demo.py
 │   ├── simpy_clocked_counter_demo.py
-│   └── simpy_benchmark_demo.py
-├── tests/                    # 43 automated pytest unit & integration tests
+│   ├── simpy_benchmark_demo.py
+│   └── nbit_alu_demo.py
+├── tests/                    # automated pytest unit & integration tests
 │   ├── test_agenda.py
 │   ├── test_circuits.py
+│   ├── test_nbit.py
 │   ├── test_gates.py
 │   ├── test_probe.py
 │   ├── test_queue.py
@@ -144,6 +147,11 @@ Located in [`circuit_sim/simpy_agenda.py`](file:///C:/dev/perf_sim/core/circuit_
 - `multiplexer(a, b, sel, out_wire, delays, agenda)` (2-to-1 Mux)
 - `demultiplexer(in_wire, sel, out_a, out_b, delays, agenda)` (1-to-2 Demux)
 
+### N-bit Datapath ([`circuit_sim/nbit.py`](file:///C:/dev/perf_sim/core/circuit_sim/nbit.py))
+- `n_bit_not` / `n_bit_and` / `n_bit_or` / `n_bit_xor` / `n_bit_mux` / `or_reduce`
+- `n_bit_register(d_bus, clk, q_bus, load=None, delays, agenda)`
+- `alu(x, y, out, zx, nx, zy, ny, f, no, zr, ng, delays, agenda)` (Nand2Tetris control)
+
 ### Sequential Logic ([`circuit_sim/sequential.py`](file:///C:/dev/perf_sim/core/circuit_sim/sequential.py))
 - `sr_latch(s, r, q, q_bar, delays, agenda)`
 - `d_latch(d, enable, q, q_bar, delays, agenda)`
@@ -168,6 +176,7 @@ python -m pytest -v
 | [`tests/test_queue.py`](file:///C:/dev/perf_sim/core/tests/test_queue.py) | FIFO queue ordering, empty errors, message passing interface. |
 | [`tests/test_gates.py`](file:///C:/dev/perf_sim/core/tests/test_gates.py) | Pure logic functions, propagation delays, De Morgan OR, OOP gate aliases. |
 | [`tests/test_circuits.py`](file:///C:/dev/perf_sim/core/tests/test_circuits.py) | Half-adder / Full-adder truth tables, exact SICP timing trace, 4-bit adder, Mux/Demux. |
+| [`tests/test_nbit.py`](file:///C:/dev/perf_sim/core/tests/test_nbit.py) | N-bit bitwise ops, mux, load/hold register, Nand2Tetris ALU functions. |
 | [`tests/test_simpy_agenda.py`](file:///C:/dev/perf_sim/core/tests/test_simpy_agenda.py) | SimPyAgenda, clock_generator, pulse_generator, 8-bit ripple adder on SimPy, SR latch, RealtimeAgenda. |
 | [`tests/test_probe.py`](file:///C:/dev/perf_sim/core/tests/test_probe.py) | Probe output formatting, callback hooks, `ProbeRecorder`. |
 
