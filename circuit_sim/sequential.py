@@ -30,8 +30,14 @@ def sr_latch(
     
     Q = NOR(R, Q_bar)
     Q_bar = NOR(S, Q)
+
+    Both output wires default to 0. That is the illegal/metastable NOR-SR
+    state and would oscillate on the agenda, so Q_bar is powered on to 1
+    (Q=0 hold) unless the caller already set a complementary pair.
     """
     d_delays = delays or DEFAULT_DELAYS
+    if get_signal(q) == get_signal(q_bar):
+        set_signal(q_bar, 1 - get_signal(q))
     nor_gate(r, q_bar, q, delay=d_delays.nor_gate, agenda=agenda)
     nor_gate(s, q, q_bar, delay=d_delays.nor_gate, agenda=agenda)
     return "ok"

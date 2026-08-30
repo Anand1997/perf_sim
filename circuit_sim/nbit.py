@@ -157,22 +157,25 @@ def n_bit_register(
     """
     Positive-edge-triggered n-bit register built from D flip-flops.
 
-    If `load` is provided, the register holds its previous value when load=0
-    and captures `d_bus` when load=1. If `load` is omitted, every rising clock
-    edge stores `d_bus`.
+    If `load` is provided, the clock is AND-gated so the register holds when
+    load=0 and captures `d_bus` on a rising edge when load=1. If `load` is
+    omitted, every rising clock edge stores `d_bus`.
     """
     n = _require_width(d_bus, q_bus, name="n_bit_register")
     d_delays = delays or DEFAULT_DELAYS
     q_bars = [make_wire(f"reg_qbar_{i}") for i in range(n)]
 
-    d_inputs: Sequence[Callable[..., Any]] = d_bus
+    # Gate the clock rather than muxing Q back onto D. Feeding Q into the
+    # master latch (transparent while CLK=0) forms a combinational loop with
+    # the NOR SR latches and can oscillate forever on the agenda.
+    clk_in = clk
     if load is not None:
-        muxed = [make_wire(f"reg_mux_{i}") for i in range(n)]
-        n_bit_mux(q_bus, d_bus, load, muxed, delays=d_delays, agenda=agenda)
-        d_inputs = muxed
+        gated = make_wire("reg_gated_clk")
+        and_gate(clk, load, gated, delay=d_delays.and_gate, agenda=agenda)
+        clk_in = gated
 
     for i in range(n):
-        d_flip_flop(d_inputs[i], clk, q_bus[i], q_bars[i], delays=d_delays, agenda=agenda)
+        d_flip_flop(d_bus[i], clk_in, q_bus[i], q_bars[i], delays=d_delays, agenda=agenda)
     return q_bars
 
 

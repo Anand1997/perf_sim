@@ -13,6 +13,7 @@ from circuit_sim.nbit import (
     n_bit_xor,
     or_reduce,
 )
+from circuit_sim.sequential import sr_latch
 from circuit_sim.wire import get_signal, make_bus, make_wire, set_bus_values, set_signal
 
 
@@ -179,3 +180,16 @@ def test_n_bit_register_load_and_hold():
     set_signal(load, 1)
     _clock_pulse(agenda, clk)
     assert bus_to_int(q) == 0b0101
+
+
+def test_sr_latch_power_on_does_not_oscillate():
+    agenda = make_agenda()
+    s = make_wire("S")
+    r = make_wire("R")
+    q = make_wire("Q")
+    q_bar = make_wire("Q_bar")
+    sr_latch(s, r, q, q_bar, agenda=agenda)
+    propagate(agenda)
+    assert agenda.is_empty() is True
+    assert get_signal(q) == 0
+    assert get_signal(q_bar) == 1
