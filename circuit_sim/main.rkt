@@ -15,7 +15,7 @@
 ;; Demo: Full adder
 ;; -------------------------------------------------------------------
 (define (demo-full-adder)
-  (set! the-agenda (make-agenda))
+  (reset-agenda!)
 
   (define a (make-wire))
   (define b (make-wire))
@@ -35,16 +35,18 @@
   (set-signal! a 1)
   (set-signal! c-in 1)
   (propagate)
+  (newline)
 
   (displayln "\n=== Setting b=1 ===")
   (set-signal! b 1)
-  (propagate))
+  (propagate)
+  (newline))
 
 ;; -------------------------------------------------------------------
 ;; Demo: 4-bit ripple-carry adder
 ;; -------------------------------------------------------------------
 (define (demo-ripple-adder)
-  (set! the-agenda (make-agenda))
+  (reset-agenda!)
 
   (define a-wires (map (lambda (_) (make-wire)) '(1 2 3 4)))
   (define b-wires (map (lambda (_) (make-wire)) '(1 2 3 4)))
@@ -64,7 +66,8 @@
   (set-signal! (list-ref a-wires 0) 1)
   (set-signal! (list-ref a-wires 1) 1)
   (set-signal! (list-ref b-wires 0) 1)
-  (propagate))
+  (propagate)
+  (newline))
 
 ;; Run demos
 (demo-full-adder)

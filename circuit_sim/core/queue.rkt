@@ -1,34 +1,36 @@
 #lang racket/base
 
+(require racket/mpair)
+
 (provide make-queue
          empty-queue?
          front-queue
          insert-queue!
          delete-queue!)
 
-;; A queue is a pair: (front-ptr . rear-ptr)
-(define (make-queue) (cons '() '()))
+;; A queue is a mutable pair: (front-ptr . rear-ptr)
+(define (make-queue) (mcons '() '()))
 
-(define (front-ptr queue) (car queue))
-(define (rear-ptr queue) (cdr queue))
-(define (set-front-ptr! queue item) (set-car! queue item))
-(define (set-rear-ptr! queue item) (set-cdr! queue item))
+(define (front-ptr queue) (mcar queue))
+(define (rear-ptr queue) (mcdr queue))
+(define (set-front-ptr! queue item) (set-mcar! queue item))
+(define (set-rear-ptr! queue item) (set-mcdr! queue item))
 
 (define (empty-queue? queue) (null? (front-ptr queue)))
 
 (define (front-queue queue)
   (if (empty-queue? queue)
       (error "FRONT called with an empty queue" queue)
-      (car (front-ptr queue))))
+      (mcar (front-ptr queue))))
 
 (define (insert-queue! queue item)
-  (let ((new-pair (cons item '())))
+  (let ((new-pair (mcons item '())))
     (cond ((empty-queue? queue)
            (set-front-ptr! queue new-pair)
            (set-rear-ptr! queue new-pair)
            queue)
           (else
-           (set-cdr! (rear-ptr queue) new-pair)
+           (set-mcdr! (rear-ptr queue) new-pair)
            (set-rear-ptr! queue new-pair)
            queue))))
 
@@ -36,5 +38,5 @@
   (cond ((empty-queue? queue)
          (error "DELETE! called with an empty queue" queue))
         (else
-         (set-front-ptr! queue (cdr (front-ptr queue)))
+         (set-front-ptr! queue (mcdr (front-ptr queue)))
          queue)))

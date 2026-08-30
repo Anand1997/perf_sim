@@ -1,5 +1,6 @@
 #lang racket/base
 
+(require racket/mpair)
 (require "queue.rkt")
 
 (provide make-agenda
@@ -14,26 +15,26 @@
 ;; Time segment
 ;; -------------------------------------------------------------------
 (define (make-time-segment time queue)
-  (cons time queue))
+  (mcons time queue))
 
-(define (segment-time s) (car s))
-(define (segment-queue s) (cdr s))
+(define (segment-time s) (mcar s))
+(define (segment-queue s) (mcdr s))
 
 ;; -------------------------------------------------------------------
 ;; Agenda
 ;; -------------------------------------------------------------------
-(define (make-agenda) (list 0))
+(define (make-agenda) (mcons 0 '()))
 
-(define (current-time agenda) (car agenda))
+(define (current-time agenda) (mcar agenda))
 (define (set-current-time! agenda time)
-  (set-car! agenda time))
+  (set-mcar! agenda time))
 
-(define (segments agenda) (cdr agenda))
+(define (segments agenda) (mcdr agenda))
 (define (set-segments! agenda segs)
-  (set-cdr! agenda segs))
+  (set-mcdr! agenda segs))
 
-(define (first-segment agenda) (car (segments agenda)))
-(define (rest-segments agenda) (cdr (segments agenda)))
+(define (first-segment agenda) (mcar (segments agenda)))
+(define (rest-segments agenda) (mcdr (segments agenda)))
 
 (define (empty-agenda? agenda)
   (null? (segments agenda)))
@@ -44,25 +45,25 @@
 (define (add-to-agenda! time action agenda)
   (define (belongs-before? segs)
     (or (null? segs)
-        (< time (segment-time (car segs)))))
+        (< time (segment-time (mcar segs)))))
   (define (make-new-time-segment time action)
     (let ((q (make-queue)))
       (insert-queue! q action)
       (make-time-segment time q)))
   (define (add-to-segments! segs)
-    (if (= (segment-time (car segs)) time)
-        (insert-queue! (segment-queue (car segs)) action)
-        (let ((rest (cdr segs)))
+    (if (= (segment-time (mcar segs)) time)
+        (insert-queue! (segment-queue (mcar segs)) action)
+        (let ((rest (mcdr segs)))
           (if (belongs-before? rest)
-              (set-cdr! segs
-                        (cons (make-new-time-segment time action)
-                              (cdr segs)))
+              (set-mcdr! segs
+                         (mcons (make-new-time-segment time action)
+                                rest))
               (add-to-segments! rest)))))
   (let ((segs (segments agenda)))
     (if (belongs-before? segs)
         (set-segments! agenda
-                       (cons (make-new-time-segment time action)
-                             segs))
+                       (mcons (make-new-time-segment time action)
+                              segs))
         (add-to-segments! segs))))
 
 ;; -------------------------------------------------------------------
@@ -72,7 +73,8 @@
   (let ((q (segment-queue (first-segment agenda))))
     (delete-queue! q)
     (if (empty-queue? q)
-        (set-segments! agenda (rest-segments agenda)))))
+        (set-segments! agenda (rest-segments agenda))
+        'ok)))
 
 (define (first-agenda-item agenda)
   (if (empty-agenda? agenda)

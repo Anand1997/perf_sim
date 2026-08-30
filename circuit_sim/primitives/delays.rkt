@@ -1,6 +1,7 @@
 #lang racket/base
 
 (provide the-agenda
+         reset-agenda!
          inverter-delay
          and-gate-delay
          or-gate-delay
@@ -13,6 +14,9 @@
 ;; Global agenda and gate delays
 ;; -------------------------------------------------------------------
 (define the-agenda (make-agenda))
+
+(define (reset-agenda!)
+  (set! the-agenda (make-agenda)))
 
 (define inverter-delay 2)
 (define and-gate-delay 3)
